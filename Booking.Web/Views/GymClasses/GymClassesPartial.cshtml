@@ -20,12 +20,12 @@
         <td>
             @Html.DisplayFor(modelItem => item.Duration)
         </td>
-        @if (User.IsInRole("Member"))
+        @if (User.IsInRole("Member") && !Model.ShowHistory)
         {
             <td>
                 <a asp-action="BookingToggle" asp-route-id="@item.Id"
                    class="btn @(item.Attending ? "btn-danger" : "btn-success")">
-                    @(item.Attending ? "cancel" : "book")
+                    @(item.Attending ? "Cancel" : "Book")
                 </a> |
 
                 <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |

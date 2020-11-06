@@ -1,0 +1,28 @@
+﻿@model IndexViewModel
+
+@{
+    ViewData["Title"] = "History";
+}
+
+<h1>History</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.GymClasses.First().Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GymClasses.First().StartDate)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.GymClasses.First().Duration)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="gymclasses">
+        <partial name="GymClassesPartial" />
+    </tbody>
+</table>
+

@@ -36,6 +36,7 @@ namespace Booking.Web.Controllers
         {
             var userId = userManager.GetUserId(User);
             var model = new IndexViewModel();
+            viewModel.ShowHistory = false;
 
             if (!User.Identity.IsAuthenticated)
             {
@@ -48,12 +49,12 @@ namespace Booking.Web.Controllers
                 .ToListAsync();
             }
 
-            if (viewModel.ShowHistory)
-            {
-                model.GymClasses =  mapper.Map<IEnumerable<GymClassesViewModel>>(await db.GymClasses
-                                            .IgnoreQueryFilters()
-                                            .Where(g => g.StartDate < DateTime.Now).ToListAsync());
-            }
+            //if (viewModel.ShowHistory)
+            //{
+            //    model.GymClasses = mapper.Map<IEnumerable<GymClassesViewModel>>(await db.GymClasses
+            //                                .IgnoreQueryFilters()
+            //                                .Where(g => g.StartDate < DateTime.Now).ToListAsync());
+            //}
 
             else
             {
@@ -67,6 +68,20 @@ namespace Booking.Web.Controllers
                                     })
                                     .ToListAsync();
             }
+
+            return View(model);
+        }
+
+        public async Task<IActionResult> History()
+        {
+            var model = new IndexViewModel();
+            model.ShowHistory = true;
+
+            model.GymClasses = mapper.Map<IEnumerable<GymClassesViewModel>>
+                                        (await db.GymClasses
+                                        .IgnoreQueryFilters()
+                                        .Where(g => g.StartDate < DateTime.Now)
+                                        .ToListAsync());
 
             return View(model);
         }
@@ -91,9 +106,6 @@ namespace Booking.Web.Controllers
 
             return View(nameof(Index), model);
         }
-
-
-
 
         public async Task<IActionResult> BookingToggle(int? id)
         {
@@ -134,7 +146,7 @@ namespace Booking.Web.Controllers
             return View(gymClass);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Member")]
         public IActionResult Create()
         {
             if (Request.IsAjax())
@@ -144,7 +156,7 @@ namespace Booking.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Member")]
         public async Task<IActionResult> Create(CreateGymClassViewModel viewModel)
         {
             if (ModelState.IsValid)
@@ -172,7 +184,7 @@ namespace Booking.Web.Controllers
             return View(viewModel);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Member")]
         [RequiredIdRequiredModelFilter("id")]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -183,7 +195,7 @@ namespace Booking.Web.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Member")]
         public async Task<IActionResult> Edit(int id, EditGymClassViewModel viewModel)
         {
             if (id != viewModel.Id)
@@ -215,7 +227,7 @@ namespace Booking.Web.Controllers
             return View(viewModel);
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Member")]
         [RequiredIdRequiredModelFilter("id")]
         public async Task<IActionResult> Delete(int? id)
         {
@@ -228,7 +240,7 @@ namespace Booking.Web.Controllers
 
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Member")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var gymClass = await db.GymClasses.FindAsync(id);
